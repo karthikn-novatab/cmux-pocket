@@ -559,7 +559,12 @@ fun CmuxApp(
     // Orientation is derived from the real window size rather than LocalConfiguration: the
     // activity handles configuration changes itself, so a rotation must not depend on the
     // configuration CompositionLocal being refreshed.
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    //
+    // imePadding() shrinks this box by the on-screen keyboard's height so the terminal
+    // canvas, cursor, and accessory bar stay above it instead of being covered. Scaffold's
+    // default safeDrawing insets don't reliably do this on edge-to-edge-enforced targets
+    // (targetSdk 35+), so the keyboard would otherwise overlay the active input line.
+    BoxWithConstraints(modifier = Modifier.fillMaxSize().imePadding()) {
         val isLandscape = maxWidth > maxHeight
         if (isLandscape) {
             // LANDSCAPE LAYOUT: Collapsible Left Sidebar + Full Height Terminal Stage
